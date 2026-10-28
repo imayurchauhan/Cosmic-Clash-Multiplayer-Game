@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#080b17">
+    <meta name="description" content="Enter the arena. Outplay the orbit. Cosmic Clash is a free real-time multiplayer survival game.">
+    <title>Cosmic Clash — Last pilot standing</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <div class="starscape" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Cosmic Clash home" id="homeLink">
+        <span class="brand-mark"><span></span></span>
+        <span>COSMIC <b>CLASH</b></span>
+      </a>
+      <div class="top-meta"><span class="live-dot"></span> REAL-TIME ARENA <i></i> 2–8 PILOTS</div>
+      <button class="quiet-button" id="helpTop" type="button">How to play <span>↗</span></button>
+    </header>
+
+    <main id="landing" class="landing">
+      <section class="hero">
+        <div class="eyebrow"><span class="eyebrow-line"></span> SURVIVAL PROTOCOL 01</div>
+        <h1>Last pilot<br><em>standing.</em></h1>
+        <p class="hero-copy">A tiny arena. A shrinking safe zone. You and up to seven rivals. Make it to the end of the orbit.</p>
+        <div class="hero-tags">
+          <span><i class="tag-dot cyan"></i> REAL-TIME MULTIPLAYER</span>
+          <span><i class="tag-dot violet"></i> 2—8 PLAYERS</span>
+          <span><i class="tag-dot peach"></i> 3 MIN MATCHES</span>
+        </div>
+      </section>
+
+      <section class="entry-card" aria-label="Create or join a game">
+        <div class="card-kicker">ENTER THE ARENA</div>
+        <label class="field-label" for="displayName">PILOT NAME</label>
+        <input id="displayName" class="text-field" maxlength="18" autocomplete="nickname" placeholder="Choose a call sign" value="">
+        <button class="primary-button" id="createRoom" type="button">
+          <span>✦</span> Create a game <b>→</b>
+        </button>
+        <div class="divider"><span>OR JOIN A CREW</span></div>
+        <label class="field-label" for="roomCode">ROOM CODE</label>
+        <div class="join-row">
+          <input id="roomCode" class="text-field code-field" maxlength="5" autocomplete="off" placeholder="e.g. 7KQ2M" aria-label="Room code">
+          <button class="secondary-button" id="joinRoom" type="button">Join <b>→</b></button>
+        </div>
+        <div class="form-error" id="entryError" role="alert" aria-live="polite"></div>
+        <div class="card-foot"><span class="lock-icon">◇</span> Free to play · No account needed</div>
+      </section>
+
+      <div class="hero-bottom">
+        <div class="orbit-decoration" aria-hidden="true"><span></span><i></i><b></b></div>
+        <div class="quick-rules">
+          <div><strong>01</strong><span>Move with <b>WASD</b></span></div>
+          <div><strong>02</strong><span>Blast with <b>SPACE</b></span></div>
+          <div><strong>03</strong><span>Stay in the safe zone</span></div>
+        </div>
+      </div>
+      <footer class="landing-footer"><span>BUILT FOR THE BRAVE</span><span>NO DOWNLOAD. JUST DROP IN.</span></footer>
+    </main>
+
+    <main id="game" class="game-shell" hidden>
+      <div class="game-topline">
+        <div class="room-identity"><span class="brand-mark mini"><span></span></span><span>ROOM <b id="roomLabel">-----</b></span></div>
+        <div class="connection-status" id="connectionStatus"><span></span><b>Connecting</b></div>
+        <button id="exitGame" class="quiet-button exit-button" type="button">Leave room <span>↗</span></button>
+      </div>
+
+      <section id="lobbyPanel" class="lobby-panel">
+        <div class="lobby-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> YOUR CREW IS ASSEMBLING</div>
+          <h2>Gather your<br><em>constellation.</em></h2>
+          <p>Two pilots to launch. Eight can enter. Share your code and get ready to survive.</p>
+          <div class="invite-box">
+            <div><span class="field-label">ROOM CODE</span><strong id="inviteCode">-----</strong></div>
+            <button id="copyCode" class="copy-button" type="button" aria-label="Copy invite link">Copy invite <span>↗</span></button>
+          </div>
+          <div class="lobby-controls">
+            <button id="readyButton" class="secondary-button ready-button" type="button">Ready up <span>✓</span></button>
+            <button id="startButton" class="primary-button start-button" type="button" disabled>Waiting for pilots <b>→</b></button>
+          </div>
+          <p class="lobby-hint" id="lobbyHint">The host launches when at least 2 pilots are connected.</p>
+        </div>
+        <div class="crew-card">
+          <div class="section-heading"><div><span class="card-kicker">THE CREW</span><h3>Ready to drop<span id="crewCount">0/8</span></h3></div><span class="crew-signal"><i></i> LIVE LOBBY</span></div>
+          <div class="crew-list" id="crewList"></div>
+          <div class="controls-note">
+            <div class="controls-note-icon">⌘</div>
+            <div><b>Quick briefing</b><p>WASD to move · SPACE or click to attack · SHIFT to dash</p></div>
+            <button id="openHelp" type="button" aria-label="Open controls">?</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="arenaPanel" class="arena-layout" hidden>
+        <div class="arena-column">
+          <div class="arena-heading">
+            <div><span class="card-kicker" id="phaseLabel">ARENA LIVE</span><h2 id="arenaTitle">Stay in the orbit.</h2></div>
+            <div class="match-clock"><span id="matchTimer">00:00</span><small>MATCH TIME</small></div>
+          </div>
+          <div class="arena-frame" id="arenaFrame">
+            <canvas id="arena" width="1000" height="640" aria-label="Cosmic Clash multiplayer arena"></canvas>
+            <div id="zoneToast" class="zone-toast" hidden><span class="warning-icon">!</span><span><b>ZONE CONTRACTING</b><small>Get back inside the safe ring</small></span></div>
+            <div id="countdownOverlay" class="countdown-overlay" hidden><small>PREPARE FOR DROP</small><strong id="countdownValue">3</strong></div>
+            <div id="resultOverlay" class="result-overlay" hidden>
+              <div class="result-orb">✦</div><span class="card-kicker" id="resultKicker">MATCH COMPLETE</span><h2 id="resultTitle">Victory</h2>
+              <p id="resultSub"></p>
+              <div id="resultStats" class="result-stats"></div>
+              <div id="finalRankings" class="result-ranking"></div>
+              <button id="rematchButton" class="primary-button" type="button">Play again <b>↻</b></button>
+              <button id="returnLobbyButton" class="quiet-button" type="button">Return to lobby <span>↗</span></button>
+            </div>
+          </div>
+          <div class="arena-legend"><span><i class="legend-safe"></i> Safe zone</span><span><i class="legend-pickup"></i> Health orb</span><span><i class="legend-obstacle"></i> Asteroid</span><span id="playerLegend"><i class="legend-player"></i> You</span></div>
+          <div class="touch-controls" id="touchControls">
+            <div class="dpad" aria-label="Movement controls">
+              <button data-key="up" class="up" type="button" aria-label="Move up">▲</button>
+              <button data-key="left" class="left" type="button" aria-label="Move left">◀</button>
+              <button data-key="down" class="down" type="button" aria-label="Move down">▼</button>
+              <button data-key="right" class="right" type="button" aria-label="Move right">▶</button>
+            </div>
+            <div class="touch-actions"><button id="touchDash" type="button">DASH</button><button id="touchAttack" type="button">FIRE</button></div>
+          </div>
+        </div>
+        <aside class="match-sidebar">
+          <div class="hud-card self-card">
+            <div class="hud-title"><span>YOUR STATUS</span><i id="selfStatusDot"></i></div>
+            <div class="self-name-row"><span id="selfSwatch" class="self-swatch"></span><strong id="selfName">Pilot</strong><span id="selfEliminated" class="eliminated-pill" hidden>OUT</span></div>
+            <div class="health-label"><span>HULL INTEGRITY</span><b id="healthText">100</b></div>
+            <div class="health-track"><span id="healthBar"></span></div>
+            <div class="ability-row">
+              <div class="ability"><span class="ability-icon attack-icon">✦</span><div><b>Energy blast</b><small>SPACE / CLICK</small></div><span id="attackCooldown" class="ability-ready">READY</span></div>
+              <div class="ability"><span class="ability-icon dash-icon">↗</span><div><b>Star dash</b><small>SHIFT</small></div><span id="dashCooldown" class="ability-ready">READY</span></div>
+            </div>
+          </div>
+          <div class="hud-card scoreboard-card">
+            <div class="hud-title"><span>STILL IN ORBIT</span><b><span id="aliveCount">0</span> PILOTS</b></div>
+            <div class="score-list" id="scoreList"></div>
+          </div>
+          <div class="hud-card feed-card">
+            <div class="hud-title"><span>COMMS FEED</span><span class="comms-live"><i></i> LIVE</span></div>
+            <div id="eventFeed" class="event-feed"><p class="feed-empty">The arena is quiet… for now.</p></div>
+          </div>
+          <div class="safe-hud"><span class="safe-icon">◎</span><div><b id="safeStatus">Safe zone active</b><small>Watch the ring. Keep moving.</small></div></div>
+        </aside>
+      </section>
+      <footer class="game-footer"><span>COSMIC CLASH <i>·</i> SURVIVAL PROTOCOL 01</span><span>LAST PILOT STANDING WINS</span></footer>
+    </main>
+
+    <dialog id="helpDialog" class="help-dialog">
+      <button class="dialog-close" id="closeHelp" type="button" aria-label="Close">×</button>
+      <div class="eyebrow"><span class="eyebrow-line"></span> PILOT FIELD GUIDE</div>
+      <h2>Survive the<br><em>shifting orbit.</em></h2>
+      <div class="help-grid">
+        <div><span class="help-key">W A S D</span><b>Move</b><p>Use your keyboard or the on-screen pad to navigate the arena.</p></div>
+        <div><span class="help-key">SPACE / CLICK</span><b>Energy blast</b><p>Fire a bolt in the direction of your aim. A hit deals 20 damage.</p></div>
+        <div><span class="help-key">SHIFT</span><b>Star dash</b><p>Move in a burst to dodge a shot or escape the closing ring. Recharges in 3 seconds.</p></div>
+        <div><span class="help-key zone-key">◎ ZONE</span><b>Watch the ring</b><p>The arena contracts after 18 seconds. Outside the safe ring, your hull drains.</p></div>
+      </div>
+      <p class="help-win"><span>✦</span> Last pilot alive wins. Pick up a health orb to restore your hull.</p>
+    </dialog>
+
+    <script src="/static/game.js" defer></script>
+  </body>
+</html>
